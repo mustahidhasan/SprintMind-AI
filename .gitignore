@@ -216,3 +216,24 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+
+/frontend/node_modules/
+/frontend/dist/
+/frontend/.env
+/frontend/.env.local
+/frontend/.env.development
+/frontend/.env.test
+/frontend/.env.production
+/frontend/.parcel-cache/
+/frontend/.next/
+/frontend/.nuxt/
+/frontend/.vuepress/dist/
+/frontend/.cache/
+/frontend/.eslintcache
+/frontend/.stylelintcache
+/frontend/.prettiercache
+/frontend/.vscode/
+/frontend/.idea/
+/frontend/.DS_Store
+/frontend/next-env.d.ts

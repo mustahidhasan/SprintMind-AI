@@ -1,15 +1,18 @@
 import type { Metadata } from "next";
-import React from "react";
+import "./globals.css";
+import { AppShell } from "@/components/AppShell";
 
 export const metadata: Metadata = {
   title: "SprintMind AI",
-  description: "AI-assisted sprint planning and issue quality platform",
+  description: "AI-assisted sprint planning workspace",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body style={{ fontFamily: "sans-serif", margin: 0, padding: "1.5rem" }}>{children}</body>
+      <body>
+        <AppShell>{children}</AppShell>
+      </body>
     </html>
   );
 }

@@ -1,3 +1,10 @@
+import { PageHeader } from "@/components/PageHeader";
+
 export default function ProjectDetailPage({ params }: { params: { projectId: string } }) {
-  return <main><h1>Project {params.projectId}</h1><p>Project details page.</p></main>;
+  return (
+    <main>
+      <PageHeader title={`Project ${params.projectId}`} subtitle="Project summary, risks, and issue quality trends." />
+      <div className="card"><p className="muted">Overview placeholder for project analytics and sprint mapping.</p></div>
+    </main>
+  );
 }
