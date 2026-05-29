@@ -1,0 +1,31 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.frontend
+    env_file:
+      - frontend/.env.prod
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.backend
+    env_file:
+      - backend/.env.prod
+    ports:
+      - "8000:8000"
+    depends_on:
+      - ai
+
+  ai:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.ai
+    env_file:
+      - ai/.env.prod
+    ports:
+      - "8777:8777"
