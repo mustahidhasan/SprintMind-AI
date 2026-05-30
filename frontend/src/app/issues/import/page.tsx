@@ -1,29 +1,43 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
+
 import { PageHeader } from "@/components/PageHeader";
+import { api } from "@/lib/axios";
 
 export default function IssueImportPage() {
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [priority, setPriority] = useState("MEDIUM");
+  const [message, setMessage] = useState("");
+
+  const createDraft = async () => {
+    const { data } = await api.post("/issues/import", { title, description, sourceType: "MANUAL", priority });
+    setMessage(data?.message ?? "Issue draft created");
+    setTitle("");
+    setDescription("");
+  };
+
   return (
     <main>
-      <PageHeader title="Import Tasks" subtitle="Manual entry, CSV upload, and requirement paste." />
+      <PageHeader title="Import Tasks" subtitle="Manual issue input currently active." />
       <div className="grid cols-2">
         <div className="card">
           <h3>Manual Input</h3>
-          <form className="form">
-            <input className="input" placeholder="Raw task title" />
-            <textarea className="textarea" placeholder="Raw description" />
-            <input className="input" placeholder="Business goal" />
-            <input className="input" placeholder="Priority" />
-            <input className="input" placeholder="Expected deadline" />
+          <form className="form" onSubmit={(e) => e.preventDefault()}>
+            <input className="input" placeholder="Raw task title" value={title} onChange={(e) => setTitle(e.target.value)} />
+            <textarea className="textarea" placeholder="Raw description" value={description} onChange={(e) => setDescription(e.target.value)} />
+            <select className="select" value={priority} onChange={(e) => setPriority(e.target.value)}><option>LOW</option><option>MEDIUM</option><option>HIGH</option></select>
+            <div className="actions">
+              <button className="btn primary" type="button" onClick={createDraft}>Save Draft</button>
+              <Link className="btn" href="/issues/drafts">View Drafts</Link>
+            </div>
+            {message ? <p className="text-sm text-green-600">{message}</p> : null}
           </form>
         </div>
-        <div className="card">
-          <h3>CSV / Document</h3>
-          <p className="muted">Use columns: title, description, priority, component, assignee, deadline, business_value, notes.</p>
-          <input className="input" type="file" />
-          <textarea className="textarea" placeholder="Paste meeting notes or requirement document" style={{ marginTop: 10 }} />
-        </div>
+        <div className="card"><h3>AI Status</h3><p className="muted">AI operation: TBD</p></div>
       </div>
-      <div className="actions" style={{ marginTop: 12 }}><Link className="btn primary" href="/issues/analyze">Analyze with AI</Link></div>
     </main>
   );
 }

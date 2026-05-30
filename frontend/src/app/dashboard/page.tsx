@@ -1,18 +1,33 @@
+"use client";
+
+import { useEffect, useState } from "react";
+
 import { PageHeader } from "@/components/PageHeader";
-import { kpis } from "@/lib/mock-data";
+import { api } from "@/lib/axios";
 
 export default function DashboardPage() {
+  const [summary, setSummary] = useState<any>(null);
+
+  useEffect(() => {
+    api.get("/dashboard/summary").then((r) => setSummary(r.data?.data)).catch(() => undefined);
+  }, []);
+
+  const cards = [
+    ["Total Issues Synced", summary?.totalIssues ?? "-"],
+    ["High Risk Issues", summary?.highRiskIssues ?? "-"],
+    ["Sprint Risk", summary?.sprintRisk ?? "TBD"],
+    ["Average Quality", summary?.averageQualityScore ?? "-"],
+    ["Pending Approvals", summary?.pendingApprovals ?? "-"],
+    ["Business Impact", summary?.businessImpact ?? "TBD"],
+  ];
+
   return (
     <main>
-      <PageHeader title="Dashboard" subtitle="Project health, risk, quality, and approvals at a glance." />
+      <PageHeader title="Dashboard" subtitle="Project health overview." />
       <section className="grid cols-3">
-        {kpis.map(([label, value]) => (
-          <div className="card" key={label}><div className="muted">{label}</div><div className="kpi">{value}</div></div>
+        {cards.map(([label, value]) => (
+          <div className="card" key={String(label)}><div className="muted">{label}</div><div className="kpi">{value}</div></div>
         ))}
-      </section>
-      <section className="grid cols-2" style={{ marginTop: 14 }}>
-        <div className="card"><h3>Sprint Health</h3><p className="muted">Sprint overload: 86% · Blocked issues: 5 · Delay risk: High</p></div>
-        <div className="card"><h3>AI Recommendations</h3><p className="muted">Split 3 large tasks, improve acceptance criteria on 8 issues, move 2 low-priority tickets.</p></div>
       </section>
     </main>
   );

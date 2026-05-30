@@ -1,12 +1,8 @@
 from pydantic import BaseModel
 
 
-class IssueAnalysisRequest(BaseModel):
-    summary: str
-    description: str
-
-
-class IssueDraftResponse(BaseModel):
+class IssueImportRequest(BaseModel):
     title: str
     description: str
-    acceptance_criteria: list[str]
+    sourceType: str = "MANUAL"
+    priority: str = "MEDIUM"

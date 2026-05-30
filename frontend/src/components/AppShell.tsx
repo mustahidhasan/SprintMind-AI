@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { logout } from "@/lib/auth";
 
 type NavItem = {
   label: string;
@@ -66,14 +68,38 @@ function IconChevron({ open }: { open: boolean }) { return <svg className={`h-4 
 function IconMenu() { return <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 6h16M4 12h16M4 18h16" /></svg>; }
 function IconPanelCollapse() { return <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="16" rx="2" /><path d="M9 4v16M13 9l-3 3 3 3" /></svg>; }
 function IconPanelExpand() { return <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="16" rx="2" /><path d="M9 4v16M11 9l3 3-3 3" /></svg>; }
-function IconLogin() { return <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" /><path d="M10 17l5-5-5-5" /><path d="M15 12H3" /></svg>; }
 function IconLogout() { return <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><path d="M16 17l5-5-5-5" /><path d="M21 12H9" /></svg>; }
 
 export function AppShell({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
   const pathname = usePathname() ?? "";
+  const isPublicBarePage =
+    pathname === "/" ||
+    pathname.startsWith("/auth/login") ||
+    pathname.startsWith("/auth/register") ||
+    pathname.startsWith("/auth/forgot-password") ||
+    pathname.startsWith("/auth/reset-password");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [expanded, setExpanded] = useState<Record<string, boolean>>({ Onboarding: true, Jira: true, Issues: true });
+
+  const onLogout = async () => {
+    try {
+      await logout();
+    } catch {
+      // noop
+    }
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("accessToken");
+      document.cookie = "accessToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    }
+    router.push("/auth/login");
+    router.refresh();
+  };
+
+  if (isPublicBarePage) {
+    return <div className="min-h-screen">{children}</div>;
+  }
 
   const sidebarWidth = sidebarCollapsed ? "lg:w-[84px]" : "lg:w-[280px]";
   const contentOffset = sidebarCollapsed ? "lg:pl-[100px]" : "lg:pl-[296px]";
@@ -128,8 +154,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <div className="flex items-center gap-2">
             <div className="hidden rounded-full border border-line bg-slate-50 px-3 py-1 text-sm text-slate-700 sm:block">Mustahid Hasan</div>
             <Link href="/settings" className="btn !py-2" aria-label="Settings">{icons.settings}</Link>
-            <Link href="/auth/login" className="btn !py-2" aria-label="Login"><IconLogin /></Link>
-            <button className="btn !py-2" type="button" aria-label="Logout"><IconLogout /></button>
+            <button className="btn !py-2" type="button" aria-label="Logout" onClick={onLogout}><IconLogout /></button>
           </div>
         </div>
       </header>
