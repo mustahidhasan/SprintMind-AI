@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.exc import SQLAlchemyError
 
-from app.api.v1 import ai_placeholder, approvals, auth, dashboard, health, issues, jira
+from app.api.v1 import ai_placeholder, approvals, auth, dashboard, health, issues, jira, sprints
 from app.core.config import settings
 from app.core.logging import configure_logging
 from app.core.security import hash_password
@@ -26,6 +26,7 @@ app.include_router(auth.router, prefix=api_prefix)
 app.include_router(jira.router, prefix=api_prefix)
 app.include_router(dashboard.router, prefix=api_prefix)
 app.include_router(issues.router, prefix=api_prefix)
+app.include_router(sprints.router, prefix=api_prefix)
 app.include_router(approvals.router, prefix=api_prefix)
 app.include_router(ai_placeholder.router, prefix=api_prefix)
 

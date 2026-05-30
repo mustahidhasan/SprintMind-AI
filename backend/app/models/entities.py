@@ -104,3 +104,100 @@ class AuditLog(Base):
     entity_id: Mapped[str] = mapped_column(String(128))
     metadata_json: Mapped[dict] = mapped_column(JSON, default=dict)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+
+class IssueAnalysis(Base):
+    __tablename__ = "issue_analyses"
+
+    id: Mapped[str] = mapped_column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    issue_draft_id: Mapped[str] = mapped_column(String, ForeignKey("issue_drafts.id"), index=True)
+    generated_title: Mapped[str] = mapped_column(String(255))
+    generated_description: Mapped[str] = mapped_column(Text)
+    issue_type: Mapped[str] = mapped_column(String(64))
+    priority: Mapped[str] = mapped_column(String(32))
+    labels: Mapped[list] = mapped_column(JSON, default=list)
+    acceptance_criteria: Mapped[list] = mapped_column(JSON, default=list)
+    suggested_subtasks: Mapped[list] = mapped_column(JSON, default=list)
+    confidence: Mapped[float] = mapped_column()
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+
+class IssueQualityScore(Base):
+    __tablename__ = "issue_quality_scores"
+
+    id: Mapped[str] = mapped_column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    issue_draft_id: Mapped[str] = mapped_column(String, ForeignKey("issue_drafts.id"), index=True)
+    overall_score: Mapped[int] = mapped_column()
+    clarity_score: Mapped[int] = mapped_column()
+    completeness_score: Mapped[int] = mapped_column()
+    testability_score: Mapped[int] = mapped_column()
+    dependency_clarity_score: Mapped[int] = mapped_column()
+    business_value_score: Mapped[int] = mapped_column()
+    problems: Mapped[list] = mapped_column(JSON, default=list)
+    recommendations: Mapped[list] = mapped_column(JSON, default=list)
+    confidence: Mapped[float] = mapped_column()
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+
+class RiskPrediction(Base):
+    __tablename__ = "risk_predictions"
+
+    id: Mapped[str] = mapped_column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    issue_draft_id: Mapped[str | None] = mapped_column(String, ForeignKey("issue_drafts.id"), nullable=True, index=True)
+    sprint_id: Mapped[str | None] = mapped_column(String(128), nullable=True, index=True)
+    risk_type: Mapped[str] = mapped_column(String(64))
+    risk_level: Mapped[str] = mapped_column(String(32))
+    risk_score: Mapped[int] = mapped_column()
+    main_risk_factors: Mapped[list] = mapped_column(JSON, default=list)
+    recommendations: Mapped[list] = mapped_column(JSON, default=list)
+    confidence: Mapped[float] = mapped_column()
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+
+class BusinessImpactScore(Base):
+    __tablename__ = "business_impact_scores"
+
+    id: Mapped[str] = mapped_column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    issue_draft_id: Mapped[str] = mapped_column(String, ForeignKey("issue_drafts.id"), index=True)
+    impact_level: Mapped[str] = mapped_column(String(32))
+    impact_score: Mapped[int] = mapped_column()
+    cost_of_delay: Mapped[str] = mapped_column(String(32))
+    customer_impact: Mapped[str] = mapped_column(String(32))
+    release_risk: Mapped[str] = mapped_column(String(32))
+    reasoning: Mapped[list] = mapped_column(JSON, default=list)
+    recommended_action: Mapped[list] = mapped_column(JSON, default=list)
+    confidence: Mapped[float] = mapped_column()
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+
+class AIRecommendation(Base):
+    __tablename__ = "ai_recommendations"
+
+    id: Mapped[str] = mapped_column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    issue_draft_id: Mapped[str] = mapped_column(String, ForeignKey("issue_drafts.id"), index=True)
+    recommendation_type: Mapped[str] = mapped_column(String(64))
+    title: Mapped[str] = mapped_column(String(255))
+    description: Mapped[str] = mapped_column(Text)
+    reason: Mapped[str] = mapped_column(Text)
+    status: Mapped[str] = mapped_column(String(32), default="ACTIVE")
+    confidence: Mapped[float] = mapped_column()
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+
+class AIRequestLog(Base):
+    __tablename__ = "ai_request_logs"
+
+    id: Mapped[str] = mapped_column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id: Mapped[str | None] = mapped_column(String, ForeignKey("users.id"), nullable=True, index=True)
+    route: Mapped[str] = mapped_column(String(255))
+    provider: Mapped[str] = mapped_column(String(64))
+    model: Mapped[str] = mapped_column(String(128))
+    status: Mapped[str] = mapped_column(String(32))
+    latency_ms: Mapped[int] = mapped_column()
+    error_message: Mapped[str | None] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)

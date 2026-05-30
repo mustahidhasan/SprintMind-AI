@@ -20,6 +20,18 @@ services:
       - "8000:8000"
     depends_on:
       - postgres
+      - ai
+
+  ai:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.ai
+    env_file:
+      - ai/.env.dev
+    ports:
+      - "8777:8777"
+    volumes:
+      - ./ai:/app
 
   postgres:
     image: postgres:16-alpine
