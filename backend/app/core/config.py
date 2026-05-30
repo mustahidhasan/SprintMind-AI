@@ -10,6 +10,9 @@ class Settings(BaseSettings):
     app_port: int = 8000
     database_url: str = ""
     frontend_url: str = "http://localhost:3000"
+    ai_service_url: str = "http://ai:8777/api/v1"
+    ai_provider_name: str = "mock"
+    ai_model_name: str = "mock-model"
 
     jwt_secret: str = "change_me"
     jwt_access_token_expire_minutes: int = 15
